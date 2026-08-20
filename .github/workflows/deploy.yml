@@ -1,0 +1,108 @@
+name: Deploy To Linode
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      - name: Install and build backend
+        working-directory: server
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install and build frontend
+        working-directory: client
+        run: |
+          npm ci
+          npm run build
+
+      - name: Configure SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.LINODE_SSH_PRIVATE_KEY }}
+
+      - name: Add Linode host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.LINODE_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Create deployment bundle
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='client/node_modules' \
+            --exclude='server/node_modules' \
+            --exclude='client/dist' \
+            --exclude='server/dist' \
+            --exclude='server/.env' \
+            -czf deploy.tar.gz \
+            client \
+            server \
+            docker-compose.prod.yml \
+            .gitignore
+
+      - name: Upload deployment bundle
+        run: |
+          scp deploy.tar.gz "${{ secrets.LINODE_USER }}@${{ secrets.LINODE_HOST }}:/tmp/daily-track-app.tar.gz"
+
+      - name: Create production env file
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.PROD_MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.PROD_MYSQL_DATABASE }}
+          MYSQL_USER: ${{ secrets.PROD_MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.PROD_MYSQL_PASSWORD }}
+          APP_PORT: ${{ secrets.APP_PORT }}
+        run: |
+          cat > deploy.env <<EOF
+          MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+          MYSQL_DATABASE=${MYSQL_DATABASE}
+          MYSQL_USER=${MYSQL_USER}
+          MYSQL_PASSWORD=${MYSQL_PASSWORD}
+          APP_PORT=${APP_PORT:-80}
+          EOF
+
+      - name: Upload production env file
+        run: |
+          scp deploy.env "${{ secrets.LINODE_USER }}@${{ secrets.LINODE_HOST }}:/tmp/daily-track-app.env"
+
+      - name: Deploy on Linode
+        env:
+          LINODE_USER: ${{ secrets.LINODE_USER }}
+          LINODE_HOST: ${{ secrets.LINODE_HOST }}
+        run: |
+          ssh "${LINODE_USER}@${LINODE_HOST}" "
+            export REMOTE_DIR=\"\$HOME/apps/daily-track-app\"
+            bash -s
+          " <<'EOF'
+          set -euo pipefail
+
+          mkdir -p "$REMOTE_DIR"
+          cd "$REMOTE_DIR"
+
+          rm -rf client server docker-compose.prod.yml
+          tar -xzf /tmp/daily-track-app.tar.gz -C "$REMOTE_DIR"
+          rm -f /tmp/daily-track-app.tar.gz
+          mv /tmp/daily-track-app.env "$REMOTE_DIR/.env"
+
+          docker compose -f docker-compose.prod.yml up -d --build
+          docker image prune -f
+          EOF
