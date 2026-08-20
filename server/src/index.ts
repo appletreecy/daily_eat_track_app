@@ -8,12 +8,12 @@ import summaryRoutes from './routes/summaryRoutes';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/health', async(req, res)=>{
+app.get('/api/health', async (_req, res) => {
     try {
         const connection = await pool.getConnection();
         await connection.ping();
@@ -34,5 +34,4 @@ app.listen(PORT, ()=>{
 })
 
 export default app;
-
 
