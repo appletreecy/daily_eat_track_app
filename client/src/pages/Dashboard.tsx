@@ -91,9 +91,7 @@ const Dashboard = () => {
               <DailySummaryCard summary={summary} />
               <MealList meals={meals} />
             </div>
-            <div className="chart-wrapper">
               <MacroDonutChart summary={summary} />
-            </div>
             <DailyCoachCard
               date={selectedDate}
               insight={coachInsight}
