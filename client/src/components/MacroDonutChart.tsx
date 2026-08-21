@@ -36,7 +36,7 @@ const MacroDonutChart = ({ summary }: MacroDonutChartProps) => {
       {chartData.length === 0 ? (
         <p className="muted-text">No macro data available for this date.</p>
       ) : (
-        <div className="chart-wrapper">
+          <div className="chart-canvas">
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
@@ -55,7 +55,7 @@ const MacroDonutChart = ({ summary }: MacroDonutChartProps) => {
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-        </div>
+          </div>
       )}
     </section>
   );
