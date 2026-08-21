@@ -4,6 +4,8 @@ export interface DailyCoachInsight {
   summary: string;
   suggestions: string[];
   warning: string | null;
+  responseTimeMs: number | null;
+  responseSource: 'openai' | 'fallback';
 }
 
 interface OpenAIChatCompletionResponse {
@@ -12,6 +14,11 @@ interface OpenAIChatCompletionResponse {
       content?: string | null;
     };
   }>;
+}
+
+interface TimedCoachInsight {
+  insight: DailyCoachInsight;
+  responseTimeMs: number;
 }
 
 const getHighestCalorieMeal = (meals: Meal[]): Meal | null => {
@@ -33,6 +40,8 @@ const buildFallbackInsight = (date: string, summary: DailySummary, meals: Meal[]
         'Start with calories and macros first, then add notes when something unusual happens.',
       ],
       warning: null,
+        responseTimeMs: null,
+        responseSource: 'fallback',
     };
   }
 
@@ -91,6 +100,8 @@ const buildFallbackInsight = (date: string, summary: DailySummary, meals: Meal[]
     summary: summaryParts.join(' '),
     suggestions: suggestions.slice(0, 3),
     warning,
+    responseTimeMs: null,
+    responseSource: 'fallback',
   };
 };
 
@@ -156,19 +167,22 @@ const parseInsightResponse = (content: string): DailyCoachInsight | null => {
         .filter((suggestion): suggestion is string => typeof suggestion === 'string' && suggestion.trim() !== '')
         .slice(0, 3),
       warning: typeof parsed.warning === 'string' ? parsed.warning : null,
+        responseTimeMs: null,
+        responseSource: 'openai',
     };
   } catch {
     return null;
   }
 };
 
-const callOpenAI = async (date: string, summary: DailySummary, meals: Meal[]): Promise<DailyCoachInsight | null> => {
+const callOpenAI = async (date: string, summary: DailySummary, meals: Meal[]): Promise<TimedCoachInsight | null> => {
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
     return null;
   }
 
+  const requestStartedAt = Date.now();
   const response = await fetch(process.env.OPENAI_API_URL ?? 'https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -204,7 +218,20 @@ const callOpenAI = async (date: string, summary: DailySummary, meals: Meal[]): P
     return null;
   }
 
-  return parseInsightResponse(content);
+  const parsedInsight = parseInsightResponse(content);
+
+  if (!parsedInsight) {
+    return null;
+  }
+
+  return {
+    insight: {
+      ...parsedInsight,
+      responseTimeMs: Date.now() - requestStartedAt,
+      responseSource: 'openai',
+    },
+    responseTimeMs: Date.now() - requestStartedAt,
+  };
 };
 
 export const nutritionCoachService = {
@@ -217,7 +244,11 @@ export const nutritionCoachService = {
       const aiInsight = await callOpenAI(date, summary, meals);
 
       if (aiInsight) {
-        return aiInsight;
+          return {
+            ...aiInsight.insight,
+            responseTimeMs: aiInsight.responseTimeMs,
+            responseSource: 'openai',
+          };
       }
     } catch (error) {
       console.error('Failed to generate AI coach insight:', error);

@@ -419,6 +419,12 @@
   font-size: 0.95rem;
 }
 
+.coach-meta {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
 .coach-content {
   display: flex;
   flex-direction: column;
