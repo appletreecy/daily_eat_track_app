@@ -369,3 +369,36 @@
     width: 100%;
   }
 }
+
+.preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preset-item {
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.preset-item:hover {
+  border-color: var(--primary);
+  background: #eff6ff;
+}
+
+.preset-name {
+  display: block;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.preset-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
