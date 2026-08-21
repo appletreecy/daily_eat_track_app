@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS meals (
     carbs NUMERIC(10, 2) NOT NULL,
     meal_date DATE NOT NULL,
     notes TEXT DEFAULT NUll,
+    had_red_meat TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

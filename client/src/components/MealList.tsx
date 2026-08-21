@@ -32,6 +32,7 @@ const MealList = ({ meals }: MealListProps) => {
                 <span>Carbs: {meal.carbs ?? 0}g</span>
                 <span>Fat: {meal.fat ?? 0}g</span>
               </div>
+              {meal.had_red_meat ? <p className="meal-tag">Included red meat</p> : null}
 
               {meal.notes ? <p className="meal-notes">Notes: {meal.notes}</p> : null}
             </article>
