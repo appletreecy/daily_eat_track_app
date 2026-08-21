@@ -1,0 +1,4 @@
+eat.scaocoding.com {
+  encode gzip zstd
+  reverse_proxy frontend:80
+}

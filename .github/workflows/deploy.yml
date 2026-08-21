@@ -58,6 +58,7 @@ jobs:
             client \
             server \
             docker-compose.prod.yml \
+            Caddyfile \
             .gitignore
 
       - name: Upload deployment bundle
@@ -98,7 +99,7 @@ jobs:
           mkdir -p "$REMOTE_DIR"
           cd "$REMOTE_DIR"
 
-          rm -rf client server docker-compose.prod.yml
+          rm -rf client server docker-compose.prod.yml Caddyfile
           tar -xzf /tmp/daily-track-app.tar.gz -C "$REMOTE_DIR"
           rm -f /tmp/daily-track-app.tar.gz
           mv /tmp/daily-track-app.env "$REMOTE_DIR/.env"
