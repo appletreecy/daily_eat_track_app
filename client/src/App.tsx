@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes } from 'react-router-dom';
 import AddMeal from './pages/AddMeal';
 import Dashboard from './pages/Dashboard';
 import './App.css';
@@ -16,14 +16,21 @@ const App = () => {
           <nav>
             <ul className="nav-list">
               <li>
-                <Link to="/" className="nav-link">
-                  Dashboard
-                </Link>
+                  <NavLink
+                    to="/"
+                    end
+                    className={({ isActive }) => (isActive ? 'nav-link nav-link-active' : 'nav-link')}
+                  >
+                    Dashboard
+                  </NavLink>
               </li>
               <li>
-                <Link to="/add-meal" className="nav-link nav-link-primary">
-                  Add Meal
-                </Link>
+                  <NavLink
+                    to="/add-meal"
+                    className={({ isActive }) => (isActive ? 'nav-link nav-link-active' : 'nav-link')}
+                  >
+                    Add Meal
+                  </NavLink>
               </li>
             </ul>
           </nav>

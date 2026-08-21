@@ -58,12 +58,13 @@
   border-color: var(--border);
 }
 
-.nav-link-primary {
+.nav-link-active {
   background: var(--primary);
   color: #fff;
+  border-color: var(--primary);
 }
 
-.nav-link-primary:hover {
+.nav-link-active:hover {
   background: var(--primary-hover);
   border-color: var(--primary-hover);
 }
