@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import DailyCoachCard from '../components/DailyCoachCard';
 import DailySummaryCard from '../components/DailySummaryCard';
 import MealList from '../components/MealList';
+import { coachService } from '../services/coachService';
 import { mealService } from '../services/mealService';
-import type { DailySummary, Meal } from '../types';
+import type { DailyCoachInsight, DailySummary, Meal } from '../types';
 import MacroDonutChart from '../components/MacroDonutChart';
 
 const today = new Date().toISOString().split('T')[0];
@@ -12,6 +14,9 @@ const Dashboard = () => {
   const [summary, setSummary] = useState<DailySummary | null>(null);
   const [selectedDate, setSelectedDate] = useState(today);
   const [loading, setLoading] = useState(true);
+  const [coachInsight, setCoachInsight] = useState<DailyCoachInsight | null>(null);
+  const [coachLoading, setCoachLoading] = useState(false);
+  const [coachError, setCoachError] = useState('');
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -34,6 +39,25 @@ const Dashboard = () => {
 
     void loadDashboardData();
   }, [selectedDate]);
+
+  useEffect(() => {
+    setCoachInsight(null);
+    setCoachError('');
+  }, [selectedDate]);
+
+  const handleGenerateInsight = async () => {
+    try {
+      setCoachLoading(true);
+      setCoachError('');
+      const insight = await coachService.getDailyInsight(selectedDate);
+      setCoachInsight(insight);
+    } catch (error) {
+      console.error('Error generating coach insight:', error);
+      setCoachError('Failed to generate coach insight.');
+    } finally {
+      setCoachLoading(false);
+    }
+  };
 
   return (
     <section className="page-section">
@@ -70,6 +94,13 @@ const Dashboard = () => {
             <div className="chart-wrapper">
               <MacroDonutChart summary={summary} />
             </div>
+            <DailyCoachCard
+              date={selectedDate}
+              insight={coachInsight}
+              loading={coachLoading}
+              error={coachError}
+              onGenerate={handleGenerateInsight}
+            />
           </>
         )}
     </section>

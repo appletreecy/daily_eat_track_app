@@ -408,3 +408,54 @@
   width: 100%;
   height: 280px;
 }
+
+.coach-card .card-header {
+  align-items: start;
+}
+
+.coach-subtitle {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+}
+
+.coach-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.coach-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.coach-heading {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.coach-text {
+  margin: 0;
+  color: var(--text);
+}
+
+.coach-list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text);
+}
+
+.coach-list li + li {
+  margin-top: 8px;
+}
+
+.coach-warning {
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fdba74;
+}

@@ -72,6 +72,8 @@ jobs:
           MYSQL_USER: ${{ secrets.PROD_MYSQL_USER }}
           MYSQL_PASSWORD: ${{ secrets.PROD_MYSQL_PASSWORD }}
           APP_PORT: ${{ secrets.APP_PORT }}
+            OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+            OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
         run: |
           cat > deploy.env <<EOF
           MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -79,6 +81,8 @@ jobs:
           MYSQL_USER=${MYSQL_USER}
           MYSQL_PASSWORD=${MYSQL_PASSWORD}
           APP_PORT=${APP_PORT:-80}
+            OPENAI_API_KEY=${OPENAI_API_KEY}
+            OPENAI_MODEL=${OPENAI_MODEL}
           EOF
 
       - name: Upload production env file
