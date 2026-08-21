@@ -32,3 +32,9 @@ export interface DailySummary{
     total_fat?: number;
     meal_count: number;
 }
+
+export interface DailyCoachInsight {
+    summary: string;
+    suggestions: string[];
+    warning: string | null;
+}

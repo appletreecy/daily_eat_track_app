@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/database';
+import coachRoutes from './routes/coachRoutes';
 import mealRoutes from './routes/mealRoutes';
 import summaryRoutes from './routes/summaryRoutes';
 
@@ -27,6 +28,7 @@ app.get('/api/health', async (_req, res) => {
 
 app.use('/api/meals', mealRoutes);
 app.use('/api/summary', summaryRoutes);
+app.use('/api/coach', coachRoutes);
 
 app.listen(PORT, ()=>{
     console.log(`Server running on http://localhost:${PORT}`)
@@ -34,4 +36,3 @@ app.listen(PORT, ()=>{
 })
 
 export default app;
-
