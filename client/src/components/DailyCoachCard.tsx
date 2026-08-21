@@ -23,6 +23,14 @@ const DailyCoachCard = ({ date, insight, loading, error, onGenerate }: DailyCoac
 
       <p className="muted-text">Selected date: {date}</p>
 
+      {insight ? (
+        <p className="coach-meta">
+          {insight.responseSource === 'openai' && insight.responseTimeMs !== null
+            ? `OpenAI response time: ${insight.responseTimeMs} ms`
+            : 'Using local fallback insight'}
+        </p>
+      ) : null}
+
       {error ? <div className="alert alert-error">{error}</div> : null}
 
       {!insight && !loading && !error ? (

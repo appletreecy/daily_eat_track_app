@@ -37,4 +37,6 @@ export interface DailyCoachInsight {
     summary: string;
     suggestions: string[];
     warning: string | null;
+    responseTimeMs: number | null;
+    responseSource: 'openai' | 'fallback';
 }
