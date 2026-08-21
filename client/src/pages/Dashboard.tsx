@@ -3,6 +3,7 @@ import DailySummaryCard from '../components/DailySummaryCard';
 import MealList from '../components/MealList';
 import { mealService } from '../services/mealService';
 import type { DailySummary, Meal } from '../types';
+import MacroDonutChart from '../components/MacroDonutChart';
 
 const today = new Date().toISOString().split('T')[0];
 
@@ -60,12 +61,17 @@ const Dashboard = () => {
         <div className="card">
           <p className="muted-text">Loading...</p>
         </div>
-      ) : (
-        <div className="dashboard-grid">
-          <DailySummaryCard summary={summary} />
-          <MealList meals={meals} />
-        </div>
-      )}
+        ) : (
+          <>
+            <div className="dashboard-grid">
+              <DailySummaryCard summary={summary} />
+              <MealList meals={meals} />
+            </div>
+            <div className="chart-wrapper">
+              <MacroDonutChart summary={summary} />
+            </div>
+          </>
+        )}
     </section>
   );
 };

@@ -35,6 +35,42 @@ const mealPresets: MealPreset[] = [
     fat: '48.9',
     had_red_meat: false,
   },
+  {
+    label: 'dinner-small',
+    searchTerms: ['dinner', 'small'],
+    calories: '500',
+    protein: '30',
+    carbs: '50',
+    fat: '20',
+    had_red_meat: false,
+  },
+  {
+    label: 'dinner-medium',
+    searchTerms: ['dinner', 'medium'],
+    calories: '600',
+    protein: '40',
+    carbs: '60',
+    fat: '30',
+    had_red_meat: false,
+  },
+  {
+    label: 'breakfast-seeded',
+    searchTerms: ['breakfast', 'seeded'],
+    calories: '220',
+    protein: '8',
+    carbs: '34',
+    fat: '6',
+    had_red_meat: false,
+  },
+  {
+    label: 'breakfast-fiber',
+    searchTerms: ['breakfast', 'fiber'],
+    calories: '220',
+    protein: '25',
+    carbs: '34',
+    fat: '20',
+    had_red_meat: false,
+  },
 ];
 
 interface MealFormState {
