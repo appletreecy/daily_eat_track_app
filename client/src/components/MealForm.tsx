@@ -6,6 +6,37 @@ interface MealFormProps {
     onSubmit: (data: CreateMealDTO) => Promise<void>;
 }
 
+interface MealPreset {
+  label: string;
+  searchTerms: string[];
+  calories: string;
+  protein: string;
+  carbs: string;
+  fat: string;
+  had_red_meat: boolean;
+}
+
+const mealPresets: MealPreset[] = [
+  {
+    label: 'fishbowl-salmonog-extra-salmonfillet',
+    searchTerms: ['fishbowl', 'salmon', 'fish bowl'],
+    calories: '875',
+    protein: '50',
+    carbs: '61',
+    fat: '50',
+    had_red_meat: false,
+  },
+    {
+    label: 'fishbowl-tofuog-extra-salmonfillet',
+    searchTerms: ['fishbowl', 'tofu', 'salmon', 'fish bowl'],
+    calories: '872',
+    protein: '40.2',
+    carbs: '61.8',
+    fat: '48.9',
+    had_red_meat: false,
+  },
+];
+
 interface MealFormState {
   meal_type: CreateMealDTO['meal_type'];
   food_name: string;
@@ -34,6 +65,16 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const normalizedFoodName = formData.food_name.trim().toLowerCase();
+
+  const matchingPresets =
+    normalizedFoodName === ''
+      ? []
+      : mealPresets.filter(
+          (preset) =>
+            preset.searchTerms.some((term) => term.includes(normalizedFoodName)) ||
+            preset.label.toLowerCase().includes(normalizedFoodName)
+        );
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -48,6 +89,18 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
     setFormData((prev) => ({
       ...prev,
       [name]: nextValue,
+    }));
+  };
+
+  const handlePresetSelect = (preset: MealPreset) => {
+    setFormData((prev) => ({
+      ...prev,
+      food_name: preset.label,
+      calories: preset.calories,
+      protein: preset.protein,
+      carbs: preset.carbs,
+      fat: preset.fat,
+      had_red_meat: preset.had_red_meat,
     }));
   };
 
@@ -116,8 +169,26 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
             type="text"
             value={formData.food_name}
             onChange={handleChange}
+              autoComplete="off"
             required
           />
+            {matchingPresets.length > 0 ? (
+              <div className="preset-list">
+                {matchingPresets.map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    className="preset-item"
+                    onClick={() => handlePresetSelect(preset)}
+                  >
+                    <span className="preset-name">{preset.label}</span>
+                    <span className="preset-meta">
+                      {preset.calories} kcal • P {preset.protein} • C {preset.carbs} • F {preset.fat}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
         </div>
 
         <div className="field">
