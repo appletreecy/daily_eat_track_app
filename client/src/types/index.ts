@@ -6,6 +6,7 @@ export interface Meal{
     protein?: number;
     carbs?: number;
     fat?: number;
+    had_red_meat: number;
     meal_date:string;
     notes?: string;
     created_at: string;
@@ -18,6 +19,7 @@ export interface CreateMealDTO{
     protein?: number;
     carbs?: number;
     fat?: number;
+    had_red_meat?: boolean;
     meal_date:string;
     notes?: string;
 }
@@ -30,4 +32,3 @@ export interface DailySummary{
     total_fat?: number;
     meal_count: number;
 }
-

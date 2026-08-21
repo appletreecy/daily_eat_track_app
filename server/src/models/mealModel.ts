@@ -9,6 +9,7 @@ export interface Meal extends RowDataPacket {
   protein: number | null;
   carbs: number | null;
   fat: number | null;
+  had_red_meat: number;
   meal_date: string;
   notes: string | null;
   created_at: string;
@@ -21,6 +22,7 @@ export interface CreateMealInput {
   protein?: number;
   carbs?: number;
   fat?: number;
+  had_red_meat?: boolean;
   meal_date: string;
   notes?: string;
 }
@@ -41,6 +43,7 @@ const updatableFields = [
   'protein',
   'carbs',
   'fat',
+  'had_red_meat',
   'meal_date',
   'notes',
 ] as const;
@@ -82,10 +85,11 @@ export const mealModel = {
           protein,
           carbs,
           fat,
+          had_red_meat,
           meal_date,
           notes
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         meal.meal_type,
@@ -94,6 +98,7 @@ export const mealModel = {
         meal.protein ?? null,
         meal.carbs ?? null,
         meal.fat ?? null,
+        meal.had_red_meat ? 1 : 0,
         meal.meal_date,
         meal.notes ?? null,
       ]
@@ -110,7 +115,11 @@ export const mealModel = {
       const value = meal[field as UpdatableField];
       if (value !== undefined) {
         fields.push(`${field} = ?`);
-        values.push(value ?? null);
+        if (field === 'had_red_meat') {
+          values.push(value ? 1 : 0);
+        } else {
+          values.push((value as string | number | null) ?? null);
+        }
       }
     }
 

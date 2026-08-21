@@ -13,6 +13,7 @@ interface MealFormState {
   protein: string;
   carbs: string;
   fat: string;
+  had_red_meat: boolean;
   meal_date: string;
   notes: string;
 }
@@ -27,6 +28,7 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
     protein: '',
     carbs: '',
     fat: '',
+    had_red_meat: false,
     meal_date: today,
     notes: '',
   });
@@ -36,11 +38,16 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = event.target;
+    const target = event.target;
+    const { name } = target;
+    const nextValue =
+      target instanceof HTMLInputElement && target.type === 'checkbox'
+        ? target.checked
+        : target.value;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: nextValue,
     }));
   };
 
@@ -56,6 +63,7 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
         protein: formData.protein === '' ? undefined : Number(formData.protein),
         carbs: formData.carbs === '' ? undefined : Number(formData.carbs),
         fat: formData.fat === '' ? undefined : Number(formData.fat),
+        had_red_meat: formData.had_red_meat,
         meal_date: formData.meal_date,
         notes: formData.notes.trim() === '' ? undefined : formData.notes,
       });
@@ -67,6 +75,7 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
         protein: '',
         carbs: '',
         fat: '',
+        had_red_meat: false,
         meal_date: today,
         notes: '',
       });
@@ -181,6 +190,18 @@ const MealForm = ({ onSubmit }: MealFormProps) => {
             onChange={handleChange}
             required
           />
+        </div>
+
+        <div className="field field-full">
+          <label className="checkbox-row">
+            <input
+              type="checkbox"
+              name="had_red_meat"
+              checked={formData.had_red_meat}
+              onChange={handleChange}
+            />
+            <span>This meal included red meat</span>
+          </label>
         </div>
 
         <div className="field field-full">

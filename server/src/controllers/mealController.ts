@@ -47,7 +47,7 @@ export const mealController = {
 
   createMeal: async (req: Request, res: Response) => {
     try {
-      const { meal_type, food_name, calories, protein, carbs, fat, meal_date, notes } = req.body;
+      const { meal_type, food_name, calories, protein, carbs, fat, had_red_meat, meal_date, notes } = req.body;
 
       if (!meal_type || !food_name || calories === undefined || !meal_date) {
         return res.status(400).json({
@@ -62,6 +62,10 @@ export const mealController = {
         protein: protein !== undefined ? Number(protein) : undefined,
         carbs: carbs !== undefined ? Number(carbs) : undefined,
         fat: fat !== undefined ? Number(fat) : undefined,
+        had_red_meat:
+          had_red_meat === undefined
+            ? undefined
+            : had_red_meat === true || had_red_meat === 1 || had_red_meat === '1',
         meal_date,
         notes,
       });
