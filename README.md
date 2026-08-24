@@ -5,3 +5,4 @@
 - [ ] Add an MCP server
 - [ ] Add tests
 - [ ] Support deleting logged meals
+- [ ] add authentications

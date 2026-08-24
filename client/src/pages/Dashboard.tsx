@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [coachInsight, setCoachInsight] = useState<DailyCoachInsight | null>(null);
   const [coachLoading, setCoachLoading] = useState(false);
   const [coachError, setCoachError] = useState('');
+  const [deletingMealId, setDeletingMealId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -59,6 +60,31 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteMeal = async (meal: Meal) => {
+    const confirmed = window.confirm(`Remove "${meal.food_name}" from ${meal.meal_date}?`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingMealId(meal.id);
+      await mealService.deleteMeal(meal.id);
+      const [mealsData, summaryData] = await Promise.all([
+        mealService.getMealsByDate(selectedDate),
+        mealService.getDailySummary(selectedDate),
+      ]);
+      setMeals(mealsData);
+      setSummary(summaryData);
+      setCoachInsight(null);
+      setCoachError('');
+    } catch (error) {
+      console.error('Error deleting meal:', error);
+    } finally {
+      setDeletingMealId(null);
+    }
+  };
+
   return (
     <section className="page-section">
       <div className="section-header">
@@ -89,7 +115,11 @@ const Dashboard = () => {
           <>
             <div className="dashboard-grid">
               <DailySummaryCard summary={summary} />
-              <MealList meals={meals} />
+              <MealList
+                meals={meals}
+                deletingMealId={deletingMealId}
+                onDeleteMeal={handleDeleteMeal}
+              />
             </div>
               <MacroDonutChart summary={summary} />
             <DailyCoachCard
