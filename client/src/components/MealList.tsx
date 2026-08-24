@@ -2,9 +2,11 @@ import type { Meal } from '../types';
 
 interface MealListProps {
   meals: Meal[];
+  deletingMealId: number | null;
+  onDeleteMeal: (meal: Meal) => Promise<void>;
 }
 
-const MealList = ({ meals }: MealListProps) => {
+const MealList = ({ meals, deletingMealId, onDeleteMeal }: MealListProps) => {
   return (
     <section className="card">
       <div className="card-header">
@@ -35,6 +37,16 @@ const MealList = ({ meals }: MealListProps) => {
               {meal.had_red_meat ? <p className="meal-tag">Included red meat</p> : null}
 
               {meal.notes ? <p className="meal-notes">Notes: {meal.notes}</p> : null}
+              <div className="meal-action">
+                <button
+                  type="button"
+                  className="danger-button"
+                  onClick={() => void onDeleteMeal(meal)}
+                  disabled={deletingMealId === meal.id}
+                >
+                  {deletingMealId === meal.id ? 'Removing...' : 'Remove'}
+                </button>
+              </div>
             </article>
           ))}
         </div>
