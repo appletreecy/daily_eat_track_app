@@ -5,6 +5,9 @@ import pool from './config/database';
 import coachRoutes from './routes/coachRoutes';
 import mealRoutes from './routes/mealRoutes';
 import summaryRoutes from './routes/summaryRoutes';
+import { startAutopilotJob } from './jobs/autopilotJob';
+
+
 
 dotenv.config();
 
@@ -13,6 +16,10 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+startAutopilotJob();
+
+
 
 app.get('/api/health', async (_req, res) => {
     try {
